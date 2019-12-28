@@ -4,7 +4,7 @@ import sys
 
 
 # IP to listen on
-IP_address = str(0.0.0.0) 
+IP_address = str("0.0.0.0") 
 
 # Port to listen on
 Port = int(1234)
