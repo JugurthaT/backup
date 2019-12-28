@@ -4,12 +4,12 @@ import sys
 
 
 # IP to listen on
-IP_address = str("0.0.0.0") 
+SERVER_IP = str("0.0.0.0") 
 
 # Port to listen on
-Port = int(1234)
+SERVER_PORT = int(1234)
 
-def Server():
+def Server(IP,port):
     """
     Here we create the server listening socket
     :return:
@@ -27,4 +27,6 @@ def Server():
     """
     server.bind((IP_address, Port))
 
-if __name__ == '__main__': Server()
+def main():
+    Server(SERVER_IP,SERVER_PORT)
+if __name__ == '__main__': main()
