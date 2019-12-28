@@ -9,7 +9,7 @@ def Server():
     """
     print("Starting the server socket !!!")
     server = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, socket.SO_REUSEPORT, 1)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, socket.SO_REUSEPORT)
     if len(sys.argv) !=3:
         print("Missing arguments")
         exit()
