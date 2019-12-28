@@ -4,10 +4,10 @@ import sys
 
 
 # IP to listen on
-IP_address = str(sys.argv[1]) 
+IP_address = str(0.0.0.0) 
 
 # Port to listen on
-Port = int(sys.argv[2])
+Port = int(1234)
 
 def Server():
     """
