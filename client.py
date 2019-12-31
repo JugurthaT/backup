@@ -7,7 +7,15 @@ import sys
 
 DEFAULT_HOST='127.0.0.1'
 DEFAULT_PORT=12345
-def main(HOST=DEFAULT_HOST,PORT=DEFAULT_PORT):
+if len(sys.argv)==2:
+    HOST=sys.argv[1]
+    PORT=sys.argv[2]
+else:
+    HOST=DEFAULT_HOST
+    PORT=DEFAULT_PORT
+    print("COntacting the default port {} and IP {}".format(PORT,HOST))
+
+def main():
     s=socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
     s.connect((HOST, PORT))
     sbuf=tsock.tsock(s)
@@ -16,6 +24,7 @@ def main(HOST=DEFAULT_HOST,PORT=DEFAULT_PORT):
     #files_to_send = files.split()
     files_to_send = files
     for file in files_to_send:
+        sbuf.put_header()
         file_name=os.path.join('originals',file)
         print("The file to be sent is:", file_name)
         file_size = os.path.getsize(file_name)
@@ -28,4 +37,4 @@ def main(HOST=DEFAULT_HOST,PORT=DEFAULT_PORT):
         with open(file_name, 'rb') as f:
               sbuf.put_bytes(f.read())
         print('File Sent " ',file_name)
-if __name__ == "__main__":main(sys.argv[1],int(sys.argv[2]))
+if __name__ == "__main__":main()

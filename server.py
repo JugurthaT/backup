@@ -1,20 +1,25 @@
 #!/usr/bin/env python3
 import socket
 import threading
-import os
+import os, signal
 import tsock
 import sys
 
-DEFAULT_HOST='127.0.0.1'
+DEFAULT_HOST='0.0.0.0'
 DEFAULT_PORT=12345
-HOST=sys.argv[1]
-if not HOST: HOST=DEFAULT_HOST
-#HOST=int(HOST)
-PORT=sys.argv[2]
-if not PORT: HOST=DEFAULT_PORT
-PORT=int(PORT)
+if len(sys.argv)==2:
+    HOST=sys.argv[1]
+    PORT=sys.argv[2]
+else:
+    HOST=DEFAULT_HOST
+    PORT=DEFAULT_PORT
+    print("Using the default port {} and IP {}".format(PORT,HOST))
+#PORT=int(PORT)
+
+s=socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
 def main():
-    s=socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
+    #s=socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
+    signal.signal(signal.SIGINT, receiveSignal)
     # If server and client run in same local directory,
     # need a separate place to store the uploads.
     try:
@@ -31,6 +36,9 @@ def main():
        print("I have received a connection from",addr )
        connbuf=tsock.tsock(conn)
        while True:
+           header=connbuf.get_bytes(connbuf.HSIZE)
+           header=header.decode("utf-8").strip()
+           print("Packet type is:", header)
            bfilesize=connbuf.get_bytes(16)
            if not bfilesize:
                break
@@ -53,4 +61,15 @@ def main():
                  remaining -=chunk_size
               print('done for this file')
        print('done with this client he doesnt have more files')
+def receiveSignal(signalNumber, frame):
+    print('Received:', signalNumber)
+    cleanup(s)
+    return
+
+def cleanup(s):
+    #s.shutdown(socket.SHUT_RDWR)
+    s.close()
+    print("I have shutdown the socket")
+    exit()
 if __name__ == "__main__":main()
+
