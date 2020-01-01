@@ -35,7 +35,9 @@ def main():
        conn, addr = s.accept()
        print("I have received a connection from",addr )
        connbuf=tsock.tsock(conn)
-       while True:
+       ## call conne_handler(connbuf)
+       connection_handler(connbuf)
+       """while True:
            header=connbuf.get_bytes(connbuf.HSIZE)
            header=header.decode("utf-8").strip()
            print("Packet type is:", header)
@@ -60,7 +62,37 @@ def main():
                  #print("for testing only len(chunk) is ",len(chunk))
                  remaining -=chunk_size
               print('done for this file')
+       """
        print('done with this client he doesnt have more files')
+       
+def connection_handler(conn):
+    while True:
+        header=conn.get_bytes(conn.HSIZE)
+        header=header.decode("utf-8").strip()
+        print("Packet type is:", header)
+        bfilesize=conn.get_bytes(16)
+        if not bfilesize:
+           break
+        filesize=int.from_bytes(bfilesize,'big')
+        print("file size is",filesize)
+        filename=conn.get_bytes(32)
+        filename=filename.decode("utf-8").strip()
+        print("file name  is",filename)
+        filename = os.path.join('uploads',filename)
+        with open(filename, 'wb') as f:
+           chunk_size = 8
+           remaining = filesize
+           while remaining:
+              chunk_size =4096 if remaining>=4096 else remaining
+              chunk = conn.get_bytes(chunk_size)
+              if not chunk: break
+              f.write(chunk)
+              #print("for testing only chunk_size is ",chunk_size)
+              #print("for testing only len(chunk) is ",len(chunk))
+              remaining -=chunk_size
+        print('done for this file')
+       #print('done with this client he doesnt have more files')
+
 def receiveSignal(signalNumber, frame):
     print('Received:', signalNumber)
     cleanup(s)
