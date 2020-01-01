@@ -4,7 +4,9 @@ import threading
 import os, signal
 import tsock, start_job
 import sys
-
+"""
+./server.py 
+"""
 DEFAULT_HOST='0.0.0.0'
 DEFAULT_PORT=12345
 if len(sys.argv)==2:
@@ -36,13 +38,14 @@ def main():
        print("I have received a connection from",addr )
        ## Create job id and folder
        newjob=start_job.job()
-       print("the new jobs id is",newjob.get_jobid())
+       JOBID=str(newjob.get_jobid())
+       print("the new jobs id is",JOBID)
        connbuf=tsock.tsock(conn)
        ## call conne_handler(connbuf)
-       connection_handler(connbuf)
+       connection_handler(connbuf,JOBID,newjob)
        print('done with this client he doesnt have more files')
        
-def connection_handler(conn):
+def connection_handler(conn,JOBID,job):
     while True:
         header=conn.get_bytes(conn.HSIZE)
         header=header.decode("utf-8").strip()
@@ -54,9 +57,15 @@ def connection_handler(conn):
         print("file size is",filesize)
         filename=conn.get_bytes(32)
         filename=filename.decode("utf-8").strip()
+        if filename.startswith('/'):
+             filename=filename[1:]
         print("file name  is",filename)
-        filename = os.path.join('uploads',filename)
-        with open(filename, 'wb') as f:
+        basepath='uploads'
+        FullPath = os.path.join(basepath,filename)
+        F_SAVE=relative_path(JOBID,filename)
+        #FileSave=FullPath.split("/")[-1]
+        #print("the saved file in destination is: ",FileSave)
+        with open(F_SAVE, 'wb') as f:
            chunk_size = 8
            remaining = filesize
            while remaining:
@@ -67,8 +76,11 @@ def connection_handler(conn):
               #print("for testing only chunk_size is ",chunk_size)
               #print("for testing only len(chunk) is ",len(chunk))
               remaining -=chunk_size
+        insert_in_catalog(job,JOBID,filename)
         print('done for this file')
        #print('done with this client he doesnt have more files')
+def insert_in_catalog(job,jobid,filename):
+    job.update_catalog(jobid,filename)
 
 def receiveSignal(signalNumber, frame):
     print('Received:', signalNumber)
@@ -80,5 +92,14 @@ def cleanup(s):
     s.close()
     print("I have shutdown the socket")
     exit()
+
+def relative_path(jobid,filename):
+    parent_dir=filename.split('/',1)[0]
+    FileSave=filename.split("/")[-1]
+    P_dir=os.path.join('uploads',str(jobid),parent_dir)
+    os.makedirs(P_dir,exist_ok=True)
+    D_File=os.path.join(P_dir,FileSave)
+    return D_File
+
 if __name__ == "__main__":main()
 
