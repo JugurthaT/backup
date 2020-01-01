@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import socket
 import threading
-import os
+import os, time
 import tsock
 import sys
 
@@ -36,5 +36,7 @@ def main():
         sbuf.put_bytes(binary_file_name)
         with open(file_name, 'rb') as f:
               sbuf.put_bytes(f.read())
-        print('File Sent " ',file_name)
+        print('File  Sent " ',file_name)
+    print("going to sleep")
+    time.sleep(3600)
 if __name__ == "__main__":main()

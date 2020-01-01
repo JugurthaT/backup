@@ -2,7 +2,7 @@
 import socket
 import threading
 import os, signal
-import tsock
+import tsock, start_job
 import sys
 
 DEFAULT_HOST='0.0.0.0'
@@ -34,6 +34,9 @@ def main():
     while True:
        conn, addr = s.accept()
        print("I have received a connection from",addr )
+       ## Create job id and folder
+       newjob=start_job.job()
+       print("the new jobs id is",newjob.get_jobid())
        connbuf=tsock.tsock(conn)
        ## call conne_handler(connbuf)
        connection_handler(connbuf)
