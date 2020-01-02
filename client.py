@@ -65,5 +65,5 @@ def main():
             sbuf.put_bytes(f.read())
         print('File  Sent " ',file_name)
     print("going to sleep")
-    time.sleep(3600)
+    time.sleep(3)
 if __name__ == "__main__":main()
