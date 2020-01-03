@@ -45,7 +45,7 @@ def main():
        connection_handler(connbuf,JOBID,newjob)
        print('done with this client he doesnt have more files')
        
-def connection_handler(conn,JOBID,job):
+def connection_handler(conn,JOBID,j):
     while True:
         header=conn.get_bytes(conn.HSIZE)
         header=header.decode("utf-8").strip()
@@ -63,7 +63,7 @@ def connection_handler(conn,JOBID,job):
         print("file name  is",filename)
         basepath='uploads'
         FullPath = os.path.join(basepath,filename)
-        F_SAVE=relative_path(JOBID,filename)
+        F_SAVE=relative_path(j,JOBID,filename)
         #FileSave=FullPath.split("/")[-1]
         #print("the saved file in destination is: ",FileSave)
         with open(F_SAVE, 'wb') as f:
@@ -77,7 +77,7 @@ def connection_handler(conn,JOBID,job):
               #print("for testing only chunk_size is ",chunk_size)
               #print("for testing only len(chunk) is ",len(chunk))
               remaining -=chunk_size
-        insert_in_catalog(job,JOBID,sfilename,F_SAVE)
+        insert_in_catalog(j,JOBID,sfilename,F_SAVE)
         print('done for this file')
        #print('done with this client he doesnt have more files')
 def insert_in_catalog(job,jobid,sfilename,filename):
@@ -94,14 +94,15 @@ def cleanup(s):
     print("I have shutdown the socket")
     exit()
 
-def relative_path(jobid,filename):
-    #parent_dir=filename.split('/',1)[0]
+def relative_path(j,jobid,filename):
+
     parent_dir=os.path.split(filename)[0]
-    #FileSave=filename.split("/")[-1]
     FileSave=os.path.split(filename)[1]
-    P_dir=os.path.join('uploads',str(jobid),parent_dir)
+    J_PATH=j.get_base_path()
+    P_dir=os.path.join(J_PATH,jobid,parent_dir)
     os.makedirs(P_dir,exist_ok=True)
     D_File=os.path.join(P_dir,FileSave)
+    print("the dest file is:",D_File)
     return D_File
 
 if __name__ == "__main__":main()

@@ -1,14 +1,24 @@
 import sqlite3
 import os
-#import start_job
-class job():
-    global BASEPATH
-    BASEPATH='/opt/python/chat'
+from pathlib import Path
+import catalog 
 
+class job():
+    BASEPATH='/opt/python/backup'
+    DB_BASE_PATH=BASEPATH+'/DB'
+    REPO_PATH=BASEPATH+'/REPO'
+    DB_FILE_PATH=DB_BASE_PATH+'/catalog.db'
+    print('The DB {}  will be open now'.format(DB_BASE_PATH))
     def __init__(self):
-        con = sqlite3.connect('/opt/python/chat/db.sqlite3', isolation_level=None)
+       
+        try:
+            Path(job.DB_BASE_PATH).mkdir(parents=True, exist_ok=True)
+        except FileExistsError:
+            pass
+
+        con = sqlite3.connect(job.DB_FILE_PATH, isolation_level=None)
         cur= con.cursor()
-        QUERY="insert into jobs (path,status) values('/opt/python/chat/repo','active')" 
+        QUERY="insert into jobs (path,status) values('-','active')" 
         print("the query to insert",QUERY)
         cur.execute(QUERY)
         QUERYJOB="SELECT last_insert_rowid()" 
@@ -22,20 +32,26 @@ class job():
     
 
     def create_job_path(self,jobid):
-        path=os.path.join(BASEPATH,str(self.JOBID))
+        path=os.path.join(job.BASEPATH,'REPO',str(self.JOBID))
         try:
             os.mkdir(path)
         except FileExistsError:
             pass 
+        return path
+
+
+    def get_base_path(self):
+        return job.REPO_PATH    
 
 
     def update_catalog(self,jid,sfname,tfname):
-        con = sqlite3.connect('/opt/python/chat/db.sqlite3', isolation_level=None)
+        con = sqlite3.connect(job.DB_FILE_PATH, isolation_level=None)
         cur= con.cursor()
         jobid=int(jid)
         cur.execute('insert into index_table values (?,?,?)', (jobid,sfname,tfname))
-        #cur.execute(QUERY)
+        cur.execute(" UPDATE jobs  SET status = 'completed'  WHERE id =?",(jobid,) )
         print("index cache updated")
+
 """
 def create_job_folder(self,jobid):
     return none
