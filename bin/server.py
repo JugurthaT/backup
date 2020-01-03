@@ -47,9 +47,18 @@ def main():
        
 def connection_handler(conn,JOBID,j):
     while True:
-        header=conn.get_bytes(conn.HSIZE)
+        header=conn.get_bytes(tsock.HSIZE)
         header=header.decode("utf-8").strip()
         print("Packet type is:", header)
+        print("STOP message is ", tsock.STOP_JOB)
+        if header == tsock.STOP_JOB:
+            print("Stop job packet.. aborting")        
+            return 
+        elif header ==tsock.FOLDER_JOB:
+            ## proces the packet ad read source filename
+            ## here just a test
+            create_folder(j,JOBID,'test')
+            return
         bfilesize=conn.get_bytes(16)
         if not bfilesize:
            break
@@ -104,6 +113,10 @@ def relative_path(j,jobid,filename):
     D_File=os.path.join(P_dir,FileSave)
     print("the dest file is:",D_File)
     return D_File
+def create_folder(j,jid,fname):
+    J_PATH=j.get_base_path()
+    P_dir=os.path.join(J_PATH,jid,fname)
+    os.makedirs(P_dir,exist_ok=True)
 
 if __name__ == "__main__":main()
 

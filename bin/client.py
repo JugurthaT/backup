@@ -13,20 +13,21 @@ import getopt
 ##################
 DEFAULT_HOST='127.0.0.1'
 DEFAULT_PORT=12345
-if len(sys.argv)==2:
+'''if len(sys.argv)==2:
     HOST=sys.argv[1]
     PORT=sys.argv[2]
 else:
-    HOST=DEFAULT_HOST
-    PORT=DEFAULT_PORT
-    print("Contacting the default port {} and IP {}".format(PORT,HOST))
+'''
+HOST=DEFAULT_HOST
+PORT=DEFAULT_PORT
+print("Contacting the default port {} and IP {}".format(PORT,HOST))
 
 def main():
-    print("Now parsing teh arguments")
+    print("Now parsing the arguments")
 ##################
     print('ARGV      :', sys.argv[1:])
     options, remainder = getopt.gnu_getopt(
-    sys.argv[1:], 's:d:v', ['source=', 'debug',])
+    sys.argv[1:], 's:d:f:l:v', ['source=', 'debug',])
     print('OPTIONS   :', options)
     debug=False
     saveset='/etc/hosts'
@@ -37,6 +38,9 @@ def main():
         elif opt in ('-d', '--debug'):
             print('Setting --debug.')
             debug = True
+        elif opt in ('-f', '--folder'):
+            print('creating a folder --folder.')
+            header='MKDIR_FOLDER' 
 
     print('DEBUG   :', debug)
     print('SAVESET    :', saveset)
@@ -45,13 +49,11 @@ def main():
     s=socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
     s.connect((HOST, PORT))
     sbuf=tsock.tsock(s)
-    #files = input('Enter file(s) to send:')
-    #files=os.listdir('originals')
-    #files_to_send = files.split()
     files_to_send = [saveset ]
     for file in files_to_send:
         print("saving file", file)
-        sbuf.put_header()
+        #header='SEND_DATA'
+        sbuf.put_header(header)
         file_name=os.path.join('originals',file)
         print("The file to be sent is:", file_name)
         file_size = os.path.getsize(file_name)
