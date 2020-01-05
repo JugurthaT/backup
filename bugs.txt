@@ -1,1 +1,33 @@
 clean code
+
+runing : ./server
+then
+./client.py -s /etc :
+
+====> I get teh below error
+
+file name  is etc/mtab its size is : 0
+the dest file is: /opt/python/backup/REPO/227/etc
+index cache updated
+done for this file
+Procesing a file
+...
+file name  is \/etc/host.conf its size is : 42702098401697739270488368123547222016
+the dest file is: /opt/python/backup/REPO/227/\/etc
+Traceback (most recent call last):
+  File "./server.py", line 139, in <module>
+    if __name__ == "__main__":main()
+  File "./server.py", line 41, in main
+    connection_handler(connbuf,JOBID,newjob)
+  File "./server.py", line 67, in connection_handler
+    backup_a_file(conn,j,JOBID)
+  File "./server.py", line 123, in backup_a_file
+    F_SAVE=relative_path(j,JOBID,filename)
+  File "./server.py", line 92, in relative_path
+    os.makedirs(P_dir,exist_ok=True)
+  File "/usr/lib/python3.5/os.py", line 229, in makedirs
+    if head and tail and not path.exists(head):
+  File "/usr/lib/python3.5/genericpath.py", line 19, in exists
+    os.stat(path)
+ValueError: embedded null byte
+
