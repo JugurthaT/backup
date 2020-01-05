@@ -10,6 +10,7 @@ HSIZE=32
 STOP_JOB = 'STOP_JOB'
 FOLDER_JOB='MKDIR_FOLDER'
 LINK_JOB='MK_LINK'
+FILE_JOB='BKP_FILE'
 class tsock:
     def __init__(self,s):
         self.sock= s
@@ -28,8 +29,12 @@ class tsock:
         return data 
     def put_header(self,header):
         padded_header="{:<32}".format(header) 
+        #print("put_header : padded_header=",padded_header)
         self.sock.sendall(str.encode(padded_header)) 
 
     def get_header(self):
-        data = self.sock.recv(self.HSIZE)
-        return data
+        data = self.sock.recv(32)
+        #print("get_header :pad_data :and length ",data,len(data)) 
+        unpad_data=data.decode("utf-8").strip()
+        #print("get_header :pad_data :and length ",unpad_data,len(unpad_data)) 
+        return unpad_data
