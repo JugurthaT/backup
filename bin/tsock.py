@@ -34,7 +34,7 @@ class tsock:
 
     def get_header(self):
         data = self.sock.recv(32)
-        #print("get_header :pad_data :and length ",data,len(data)) 
         unpad_data=data.decode("utf-8").strip()
-        #print("get_header :pad_data :and length ",unpad_data,len(unpad_data)) 
         return unpad_data
+    def send_stop(self):
+        self.sock.sendall(str.encode('STOP_JOB'))

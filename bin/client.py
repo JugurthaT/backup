@@ -60,6 +60,8 @@ def main():
     for f in files_to_send:
        send_item(f,sbuf) 
     print("going to sleep")
+    sbuf.send_stop()
+    s.close()
     #time.sleep(3)
 
 #################################################
@@ -98,7 +100,7 @@ def send_a_file(fname,sbuf):
     print("The file size is :",file_size)
     padded_fname="{:<512}".format(file_name)
     binary_file_name=str.encode(padded_fname)
-    print("The file name is encoded to binary:",binary_file_name)
+    print("The file name is :",fname)
     sbuf.put_bytes(file_size.to_bytes(16,'big'))
     sbuf.put_bytes(binary_file_name)
     with open(file_name, 'rb') as f:

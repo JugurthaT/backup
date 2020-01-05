@@ -48,14 +48,14 @@ def connection_handler(conn,JOBID,j):
             #print("an empty header?? leaving")
             pass 
         if header == tsock.STOP_JOB:
-            print("Stop job packet.. aborting")        
+            print("Stop job packet..done with this Job")        
             return 
         elif header ==tsock.FOLDER_JOB:
             ## proces the packet ad read source filename
             ## here just a test
             fldr_name=conn.get_bytes(512)
-            print("foldername is ",fldr_name," Its size ",len(fldr_name))
             fldrname=fldr_name.decode("utf-8").strip()
+            #print("foldername is ",fldr_name," Its size ",len(fldr_name))
             if fldrname.startswith('/'):
                 strip_fldrname=fldrname[1:]
                 print("file name  is",strip_fldrname)
@@ -88,6 +88,7 @@ def relative_path(j,jobid,filename):
     FileSave=os.path.split(filename)[1]
     J_PATH=j.get_base_path()
     P_dir=os.path.join(J_PATH,jobid,parent_dir)
+    print("the dest file is:",P_dir)
     os.makedirs(P_dir,exist_ok=True)
     D_File=os.path.join(P_dir,FileSave)
     #print("the dest file is:",D_File)
@@ -111,13 +112,12 @@ def backup_a_file(conn,j,JOBID):
      if not bfilesize:
          return 
      filesize=int.from_bytes(bfilesize,'big')
-     print("file size is",filesize)
      filename=conn.get_bytes(512)
      filename=filename.decode("utf-8").strip()
      sfilename=filename
      if filename.startswith('/'):
           filename=filename[1:]
-     print("file name  is",filename)
+     print("file name  is",filename, "its size is :", filesize)
      basepath='uploads'
      FullPath = os.path.join(basepath,filename)
      F_SAVE=relative_path(j,JOBID,filename)
