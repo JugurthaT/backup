@@ -1,5 +1,11 @@
 clean code
 
+
+for teh below:
+the isue happens after processing /etc/mtab
+skipped symlinks for now
+will add a function for them
+========
 runing : ./server
 then
 ./client.py -s /etc :

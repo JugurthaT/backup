@@ -118,13 +118,11 @@ def backup_a_file(conn,j,JOBID):
      if filename.startswith('/'):
           filename=filename[1:]
      print("file name  is",filename, "its size is :", filesize)
-     basepath='uploads'
-     FullPath = os.path.join(basepath,filename)
      F_SAVE=relative_path(j,JOBID,filename)
      with open(F_SAVE, 'wb') as f:
         remaining = filesize
         while remaining:
-           chunk_size =4096 if remaining>=4096 else remaining
+           chunk_size =128 if remaining>=128 else remaining
            chunk = conn.get_bytes(chunk_size)
            if not chunk: break
            f.write(chunk)

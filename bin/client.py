@@ -66,6 +66,8 @@ def main():
 
 #################################################
 def send_item(item,buf):
+    if os.path.islink(item):
+        return
     if os.path.isfile(item):
         send_a_file(item,buf)
     elif os.path.isdir(item):
@@ -112,11 +114,3 @@ def listdir_fullpath(d):
 
 if __name__ == "__main__":main()
 
-'''    if os.path.isdir(fname):
-       header=tsock.FOLDER_JOB
-    if os.path.isfile(fname):
-       header=tsock.FILE_JOB
-    else:
-        print("Not a file or folder :", file," type is ", type(fname) )
-        # above i couldnt fix tsock.HSIZE soi did put 8.. see it later
-'''
